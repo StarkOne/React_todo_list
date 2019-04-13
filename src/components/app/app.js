@@ -16,7 +16,7 @@ export default class App extends Component {
       todoData : [
         this.createTodoItem('Drink Coffee'),
         this.createTodoItem('Make Awesome App'),
-        this.createTodoItem('Have a lunch'),
+        this.createTodoItem('Have a lunch appsp'),
       ]
     }
   }
@@ -33,7 +33,7 @@ export default class App extends Component {
   }
 
   createTodoItem(label) {
-    return { label: label, important: false, done: false, id: this.number++ }
+    return { label: label, important: false, done: false, search: true, id: this.number++ }
   }
   findIndexItem(id) {
     return this.state.todoData.findIndex((item) => {
@@ -73,6 +73,22 @@ export default class App extends Component {
       }
     })
   }
+  onChangeList = (text) => {
+    this.setState(({todoData}) => {
+      const copeArr = [...todoData];
+      const newArr = copeArr.map((item) => {
+        if (!item.label.toLowerCase().includes(text.toLowerCase())) {
+          item.search = false;
+        } else {
+          item.search = true;
+        }
+        return item;
+      });
+      return {
+        todoData: newArr
+      }
+    })
+  }
 
   render() {
     const { todoData } = this.state;
@@ -82,7 +98,7 @@ export default class App extends Component {
       <div className="todo-app">
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
-          <SearchPanel />
+          <SearchPanel onChangeList={this.onChangeList}/>
           <ItemStatusFilter />
         </div>
 
