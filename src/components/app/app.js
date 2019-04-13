@@ -18,7 +18,8 @@ export default class App extends Component {
         this.createTodoItem('Make Awesome App'),
         this.createTodoItem('Have a lunch appsp'),
       ],
-      showBtn: 'allItem'
+      showBtn: 'allItem',
+      term: ''
     }
   }
 
@@ -34,7 +35,7 @@ export default class App extends Component {
   }
 
   createTodoItem(label) {
-    return { label: label, important: false, done: false, search: true, id: this.number++ }
+    return { label: label, important: false, done: false, id: this.number++ }
   }
   findIndexItem(id) {
     return this.state.todoData.findIndex((item) => {
@@ -74,7 +75,7 @@ export default class App extends Component {
       }
     })
   }
-  onChangeList = (text) => {
+/*   onChangeList = (text) => {
     this.setState(({todoData}) => {
       const copeArr = [...todoData];
       const newArr = copeArr.map((item) => {
@@ -89,7 +90,7 @@ export default class App extends Component {
         todoData: newArr
       }
     })
-  }
+  } */
   toggoleClinkBtn = (text) => {
     this.setState(({ todoData }) => {
       const newArr = [...todoData].map((item) => {
@@ -143,15 +144,30 @@ export default class App extends Component {
     }
   }
 
+  search(items, term) {
+    if(term.length === 0) {
+      return items;
+    }
+    return items.filter((item) => {
+      return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
+    })
+  }
+  onSearchChange = (term) => {
+    this.setState({
+      term
+    });
+  }
+
   render() {
-    const { todoData, showBtn } = this.state;
+    const { todoData, showBtn, term } = this.state;
     const doneCount = todoData.filter(el => el.done).length;
     const todoCount = todoData.length - doneCount;
+    const visibleItems = this.search(todoData, term);
     return (
       <div className="todo-app">
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
-          <SearchPanel onChangeList={this.onChangeList}/>
+          <SearchPanel onSearchChange={this.onSearchChange}/>
           <ItemStatusFilter 
             toggoleClinkBtn={this.toggoleClinkBtn}
             activeBtnShow={showBtn}
@@ -160,7 +176,7 @@ export default class App extends Component {
         </div>
 
         <TodoList
-          todos={todoData}
+          todos={visibleItems}
           onDeleted={this.deleteItem}
           onToggleImportant={this.onToggleImportant}
           onToggleDone={this.onToggleDone}
