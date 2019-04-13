@@ -17,7 +17,8 @@ export default class App extends Component {
         this.createTodoItem('Drink Coffee'),
         this.createTodoItem('Make Awesome App'),
         this.createTodoItem('Have a lunch appsp'),
-      ]
+      ],
+      showBtn: 'allItem'
     }
   }
 
@@ -89,9 +90,61 @@ export default class App extends Component {
       }
     })
   }
+  toggoleClinkBtn = (text) => {
+    this.setState(({ todoData }) => {
+      const newArr = [...todoData].map((item) => {
+        switch (text) {
+          case 'allItem':
+            item.search = true;
+            break;
+          case 'active':
+            if (!item.done) {
+              item.search = true;
+            } else {
+              item.search = false;
+            }
+            break;
+          case 'done':
+            if (item.done) {
+              item.search = true;
+            } else {
+              item.search = false;
+            }
+            break;
+          default:
+            break;
+        }
+        return item;
+      })
+      return {
+        todoData: newArr
+      }
+    });
+  }
+  activeBtnToggle = (text) => {
+    switch (text) {
+      case 'allItem':
+        this.setState({
+          showBtn: 'allItem'
+        })
+        break;
+      case 'active':
+        this.setState({
+          showBtn: 'active'
+        })
+        break;
+      case 'done':
+        this.setState({
+          showBtn: 'done'
+        })
+        break;
+      default:
+        break;
+    }
+  }
 
   render() {
-    const { todoData } = this.state;
+    const { todoData, showBtn } = this.state;
     const doneCount = todoData.filter(el => el.done).length;
     const todoCount = todoData.length - doneCount;
     return (
@@ -99,7 +152,11 @@ export default class App extends Component {
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
           <SearchPanel onChangeList={this.onChangeList}/>
-          <ItemStatusFilter />
+          <ItemStatusFilter 
+            toggoleClinkBtn={this.toggoleClinkBtn}
+            activeBtnShow={showBtn}
+            activeBtnToggle={this.activeBtnToggle}
+        />
         </div>
 
         <TodoList
