@@ -15,10 +15,14 @@ export default class AddItem extends Component {
   }
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.itemAdd(this.state.label);
-    this.setState({
-      label: ''
-    })
+    if (this.state.label) {
+      this.props.itemAdd(this.state.label);
+      this.setState({
+        label: ''
+      })
+    } else {
+      return false;
+    }
   }
 
   render() {

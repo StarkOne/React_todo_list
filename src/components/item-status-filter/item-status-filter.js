@@ -2,35 +2,31 @@ import React, { Component } from 'react';
 import './item-status-filter.css';
 
 export default class ItemStatusFilter extends Component {
-  checkBtnActive = (text) => {
-    this.props.activeBtnToggle(text);
-  }
+  buttons = [
+    { name: 'all', label: 'All'},
+    { name: 'active', label: 'Active' },
+    { name: 'done', label: 'Done' },
+  ];
   render() {
+    const { filter, onFilterChange } = this.props;
     const activeBtnShow = this.props.activeBtnShow;
+    const buttons = this.buttons.map(({name, label}) => {
+    const isActive = filter === name;
+    const clazz = isActive ? 'btn-info' : 'btn-outline-secondary';
+      return (
+        <button
+          type="button"
+          key={name}
+          className={`btn ${clazz}`}
+          onClick={() => {
+            onFilterChange(name)
+          }}
+        >{label}</button>
+      );
+    })
     return (
       <div className="btn-group">
-        <button 
-          type="button"
-          className={`btn ${activeBtnShow === 'allItem' ? 'btn-info' : 'btn-outline-secondary'}`}
-          onClick={() => {
-            this.checkBtnActive('allItem')
-            this.props.toggoleClinkBtn('allItem')
-          }} 
-        >All</button>
-        <button type="button"
-          className={`btn ${activeBtnShow === 'active' ? 'btn-info' : 'btn-outline-secondary'}`}
-          onClick={() => {
-            this.checkBtnActive('active')
-            this.props.toggoleClinkBtn('active')
-          }}
-          >Active</button>
-        <button type="button"
-          className={`btn ${activeBtnShow === 'done' ? 'btn-info' : 'btn-outline-secondary'}`}
-          onClick={() => {
-            this.checkBtnActive('done')
-            this.props.toggoleClinkBtn('done')
-          }}
-          >Done</button>
+        {buttons}
       </div>
     );
   }

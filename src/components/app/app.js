@@ -18,7 +18,7 @@ export default class App extends Component {
         this.createTodoItem('Make Awesome App'),
         this.createTodoItem('Have a lunch appsp'),
       ],
-      showBtn: 'allItem',
+      filter: 'all',
       term: ''
     }
   }
@@ -91,7 +91,7 @@ export default class App extends Component {
       }
     })
   } */
-  toggoleClinkBtn = (text) => {
+/*   toggoleClinkBtn = (text) => {
     this.setState(({ todoData }) => {
       const newArr = [...todoData].map((item) => {
         switch (text) {
@@ -143,6 +143,29 @@ export default class App extends Component {
         break;
     }
   }
+ */
+  filter(items, filter) {
+
+    switch (filter) {
+      case 'all':
+        return items;
+        break;
+      case 'active':
+        return items.filter((item) => {
+          return !item.done;
+        });
+        break;
+      case 'done':
+        return items.filter((item) => {
+          return item.done;
+        });
+        break;
+      default:
+        return items;
+        break;
+    }
+
+  }
 
   search(items, term) {
     if(term.length === 0) {
@@ -157,22 +180,26 @@ export default class App extends Component {
       term
     });
   }
+  onFilterChange = (filter) => {
+    this.setState({
+      filter
+    });
+  }
 
   render() {
-    const { todoData, showBtn, term } = this.state;
+    const { todoData, term, filter } = this.state;
     const doneCount = todoData.filter(el => el.done).length;
     const todoCount = todoData.length - doneCount;
-    const visibleItems = this.search(todoData, term);
+    const visibleItems = this.filter(this.search(todoData, term), filter);
     return (
       <div className="todo-app">
         <AppHeader toDo={todoCount} done={doneCount} />
         <div className="top-panel d-flex">
           <SearchPanel onSearchChange={this.onSearchChange}/>
           <ItemStatusFilter 
-            toggoleClinkBtn={this.toggoleClinkBtn}
-            activeBtnShow={showBtn}
-            activeBtnToggle={this.activeBtnToggle}
-        />
+            filter={filter}
+            onFilterChange={this.onFilterChange}
+          />
         </div>
 
         <TodoList
